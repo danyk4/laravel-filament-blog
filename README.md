@@ -41,7 +41,13 @@ php artisan migrate
 php artisan make:filament-user
 ```
 
-#### 7. On localhost run server
+#### 7. Add link to public storage
+
+```bash
+php artisan storage:link
+```
+
+#### 8. On localhost run server
 
 ```bash
 composer run dev
