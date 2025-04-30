@@ -73,8 +73,8 @@ class PostResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('thumbnail')
                     ->searchable(),
-                Tables\Columns\IconColumn::make('active')
-                    ->boolean(),
+                Tables\Columns\ToggleColumn::make('active'),
+                // ->boolean(),
                 // Tables\Columns\TextColumn::make('published_at')
                 //     ->dateTime()
                 //     ->sortable(),
@@ -97,7 +97,7 @@ class PostResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])->defaultPaginationPageOption(50);
     }
 
     public static function getRelations(): array

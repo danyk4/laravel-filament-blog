@@ -7,6 +7,7 @@ use App\Filament\Resources\CategoryResource\RelationManagers;
 use App\Models\Category;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -33,8 +34,11 @@ class CategoryResource extends Resource
                     ->live()
                     ->afterStateUpdated(fn(Set $set, $state) => $set('slug', Str::slug($state))),
                 Forms\Components\TextInput::make('slug')
-                    ->required()
-                    ->maxLength(255),
+                    // ->required()
+                    // ->maxLength(255),
+                    ->rules(['required', 'string', 'max:255', 'unique:categories,slug'])
+                    ->dehydrated(fn($state) => !empty($state)) // Only save if not empty
+                    ->default(fn($record) => $record?->title ? \Str::slug($record->title) : null),
             ]);
     }
 
@@ -44,6 +48,7 @@ class CategoryResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('slug'),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable(),
@@ -60,7 +65,7 @@ class CategoryResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])->defaultPaginationPageOption(50);
     }
 
     public static function getPages(): array

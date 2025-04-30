@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Post;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -63,7 +64,7 @@ class PostController extends Controller
         //     ->paginate(10);
 
         $posts = $category->exists() ?
-            $category->posts()
+                $category->posts()
                 ->where('active', true)
                 ->whereDate('published_at', '<=', Carbon::now())
                 ->orderBy('published_at', 'desc')
