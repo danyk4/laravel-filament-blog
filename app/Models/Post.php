@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class Post extends Model
@@ -61,5 +62,25 @@ class Post extends Model
         }
 
         return '/storage/' . $this->thumbnail;
+    }
+
+    public function views(): HasMany
+    {
+        return $this->hasMany(PostView::class);
+    }
+
+    public function incrementUniqueView(string $ip, string $userAgent): void
+    {
+        $exists = $this->views()
+            ->where('ip_address', $ip)
+            ->where('user_agent', $userAgent)
+            ->exists();
+
+        if (!$exists) {
+            $this->views()->create([
+                'ip_address' => $ip,
+                'user_agent' => $userAgent,
+            ]);
+        }
     }
 }
