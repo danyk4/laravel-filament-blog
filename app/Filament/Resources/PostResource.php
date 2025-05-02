@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PostResource\Pages;
 use App\Filament\Resources\PostResource\RelationManagers;
+use App\Filament\Widgets\PostOverview;
 use App\Http\Controllers\PostController;
 use App\Models\Post;
 use Filament\Forms;
@@ -70,10 +71,10 @@ class PostResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('thumbnail')
-                    ->searchable(),
-                Tables\Columns\ToggleColumn::make('active'),
+                    ->searchable(['title', 'body'])
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('thumbnail'),
+                Tables\Columns\ToggleColumn::make('active')->sortable(),
                 // ->boolean(),
                 // Tables\Columns\TextColumn::make('published_at')
                 //     ->dateTime()
@@ -114,6 +115,13 @@ class PostResource extends Resource
             'create' => Pages\CreatePost::route('/create'),
             'view' => Pages\ViewPost::route('/{record}'),
             'edit' => Pages\EditPost::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            PostOverview::class,
         ];
     }
 }

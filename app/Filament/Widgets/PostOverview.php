@@ -16,7 +16,7 @@ class PostOverview extends Widget
     {
         return [
             'viewsCount' => PostView::query()
-                ->where('post_id', '=', $this->record->id)
+                ->where('post_id', '=', $this->record->id ?? null)
                 ->count(),
         ];
     }
