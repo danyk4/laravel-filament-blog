@@ -4,10 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Post;
-use App\Models\PostView;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -16,15 +14,35 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+    public function home(): View
     {
-        $posts = Post::query()
+        // Latest post
+        $latestPost = Post::query()
             ->where('active', '=', 1)
             ->whereDate('published_at', '<=', Carbon::now())
             ->orderBy('published_at', 'desc')
-            ->paginate(10);
+            ->limit(1)
+            ->first();
 
-        return view('home', compact('posts'));
+        // Popular posts based on views
+        $popularPosts = Post::query()
+            ->withCount('views')
+            ->where('active', '=', 1)
+            ->whereDate('published_at', '<=', Carbon::now())
+            ->orderBy('views_count', 'desc')
+            ->limit(3)
+            ->get();
+        // dd($popularPosts);
+
+        // Recent categories with latest posts
+
+        // $posts = Post::query()
+        //     ->where('active', '=', 1)
+        //     ->whereDate('published_at', '<=', Carbon::now())
+        //     ->orderBy('published_at', 'desc')
+        //     ->paginate(10);
+
+        return view('home', compact('latestPost', 'popularPosts'));
     }
 
     /**
@@ -32,7 +50,7 @@ class PostController extends Controller
      */
     public function show(Post $post, Request $request): View
     {
-        if (!$post->active || $post->published_at > Carbon::now()) {
+        if (! $post->active || $post->published_at > Carbon::now()) {
             throw new NotFoundHttpException('Post not found');
         }
 
@@ -69,11 +87,11 @@ class PostController extends Controller
 
         $posts = $category->exists() ?
                 $category->posts()
-                ->where('active', true)
-                ->whereDate('published_at', '<=', Carbon::now())
-                ->orderBy('published_at', 'desc')
-                ->paginate(10) :
-            [];
+                    ->where('active', true)
+                    ->whereDate('published_at', '<=', Carbon::now())
+                    ->orderBy('published_at', 'desc')
+                    ->paginate(10) :
+                [];
 
         return view('posts.index', compact('posts', 'category'));
     }
