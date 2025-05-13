@@ -32,9 +32,13 @@ class PostController extends Controller
             ->orderBy('views_count', 'desc')
             ->limit(3)
             ->get();
-        // dd($popularPosts);
 
         // Recent categories with latest posts
+        $recentCategories = Category::query()
+            ->withCount('posts')
+            ->orderBy('posts_count', 'desc')
+            ->limit(3)
+            ->get();
 
         // $posts = Post::query()
         //     ->where('active', '=', 1)
@@ -42,7 +46,7 @@ class PostController extends Controller
         //     ->orderBy('published_at', 'desc')
         //     ->paginate(10);
 
-        return view('home', compact('latestPost', 'popularPosts'));
+        return view('home', compact('latestPost', 'popularPosts', 'recentCategories'));
     }
 
     /**

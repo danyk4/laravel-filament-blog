@@ -24,9 +24,9 @@
 
                 @foreach ($popularPosts as $post)
                     <div class="grid grid-cols-4 gap-2 pb-4">
-                        <div>
+                        <a href="{{ route('posts.show', $post) }}">
                             <img src="{{ $post->getThumbnail() }}" alt="{{ $post->title }}">
-                        </div>
+                        </a>
                         <div class="col-span-3">
                             <h3 class="text-xl font-semibold">
                                 <a href="{{ route('posts.show', $post) }}">{{ $post->title }}</a>
@@ -34,7 +34,9 @@
                             <div class="flex gap-2">
                                 @foreach ($post->categories as $categoryRecent)
                                     <a href="{{ route('categories.show', $categoryRecent) }}"
-                                        class="bg-blue-500 text-xs text-white uppercase p-1 rounded ">{{ $categoryRecent->title }}</a>
+                                        class="bg-blue-500 text-xs text-white uppercase p-1 rounded ">
+                                        {{ $categoryRecent->title }}
+                                    </a>
                                 @endforeach
                             </div>
                             <div class="test-sm">
@@ -51,7 +53,17 @@
             <h2 class="text-lg sm:text-xl font-bold mb-4 uppercase text-blue-500 border-b-2 border-blue-500">
                 Recent Categories
             </h2>
-
+            <div class="flex justify-between">
+                @foreach ($recentCategories as $category)
+                    <div class="flex gap-2">
+                        <a href="{{ route('categories.show', $category) }}"
+                            class="text-xl text-black-800 uppercase p-1
+                        hover:text-blue-500">
+                            {{ $category->title }}
+                        </a>
+                    </div>
+                @endforeach
+            </div>
         </div>
 
         <!-- Pagination -->
