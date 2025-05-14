@@ -99,4 +99,20 @@ class PostController extends Controller
 
         return view('posts.index', compact('posts', 'category'));
     }
+
+    public function search(Request $request): View
+    {
+        $s = $request->get('s');
+        $posts = Post::query()
+            ->where('active', '=', 1)
+            ->whereDate('published_at', '<=', Carbon::now())
+            ->where(function ($query) use ($s) {
+                $query->where('title', 'like', "%$s%")
+                    ->orWhere('body', 'like', "%$s%");
+            })
+            ->orderBy('published_at', 'desc')
+            ->paginate(10);
+
+        return view('posts.search', compact('posts'));
+    }
 }
